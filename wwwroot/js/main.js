@@ -1,0 +1,1 @@
+var e=((e,t)=>()=>(t||(e((t={exports:{}}).exports,t),e=null),t.exports))((()=>{console.log(`hola mundo`)}));export default e();
