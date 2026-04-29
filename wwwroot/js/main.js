@@ -1,1 +1,1 @@
-var e=((e,t)=>()=>(t||(e((t={exports:{}}).exports,t),e=null),t.exports))((()=>{console.log(`hola mundo`)}));export default e();
+import{t as e}from"./assets/chunk-Bc6B1Ox1.js";var t=e((()=>{console.log(`hola mundo`)}));export default t();export{t};

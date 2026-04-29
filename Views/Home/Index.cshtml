@@ -4,9 +4,297 @@
 
 @section Scripts {
     <script type="module" src="~/js/main.js"></script>
+    <script type="module" src="~/js/app.js"></script>
+    <script type="module" src="~/js/extras.js"></script>
+    <script type="module" src="~/js/simulation.js"></script>
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- APP SHELL -->
+<div id="app">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">⬡</span>
+                <span class="logo-text">FlowCraft</span>
+            </div>
+            <p class="logo-sub">Flujos de Proceso</p>
+        </div>
+
+        <!-- NODE PALETTE -->
+        <section class="palette-section">
+            <h3 class="section-title">Nodos</h3>
+            <div class="node-palette">
+                <div class="palette-node" data-type="start" draggable="true" title="Inicio del flujo">
+                    <div class="pnode-icon start-icon">▶</div>
+                    <span>Inicio</span>
+                </div>
+                <div class="palette-node" data-type="end" draggable="true" title="Fin del flujo">
+                    <div class="pnode-icon end-icon">■</div>
+                    <span>Fin</span>
+                </div>
+                <div class="palette-node" data-type="process" draggable="true" title="Proceso / Tarea">
+                    <div class="pnode-icon process-icon">▣</div>
+                    <span>Proceso</span>
+                </div>
+                <div class="palette-node" data-type="decision" draggable="true" title="Decisión / Condición">
+                    <div class="pnode-icon decision-icon">◆</div>
+                    <span>Decisión</span>
+                </div>
+                <div class="palette-node" data-type="io" draggable="true" title="Entrada / Salida">
+                    <div class="pnode-icon io-icon">⬡</div>
+                    <span>E/S</span>
+                </div>
+                <div class="palette-node" data-type="subprocess" draggable="true" title="Subproceso">
+                    <div class="pnode-icon subprocess-icon">⊞</div>
+                    <span>Subproc.</span>
+                </div>
+                <div class="palette-node" data-type="delay" draggable="true" title="Espera / Demora">
+                    <div class="pnode-icon delay-icon">◷</div>
+                    <span>Espera</span>
+                </div>
+                <div class="palette-node" data-type="note" draggable="true" title="Nota / Comentario">
+                    <div class="pnode-icon note-icon">✎</div>
+                    <span>Nota</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- FLOW LIST -->
+        <section class="palette-section flows-section">
+            <div class="flows-header">
+                <h3 class="section-title">Mis Flujos</h3>
+                <button id="btn-new-flow" class="btn-icon" title="Nuevo flujo">+</button>
+            </div>
+            <ul id="flow-list"></ul>
+        </section>
+
+        <!-- PROPERTIES PANEL -->
+        <section id="properties-panel" class="palette-section props-section" style="display:none">
+            <h3 class="section-title">Propiedades</h3>
+            <div class="prop-group">
+                <label>Etiqueta</label>
+                <input id="prop-label" type="text" class="prop-input" placeholder="Nombre del nodo">
+            </div>
+            <div class="prop-group">
+                <label>Descripción</label>
+                <textarea id="prop-desc" class="prop-input prop-textarea" placeholder="Detalle del paso..."></textarea>
+            </div>
+            <div class="prop-group">
+                <label>Responsable</label>
+                <input id="prop-owner" type="text" class="prop-input" placeholder="Área o persona">
+            </div>
+            <div class="prop-group">
+                <label>Color</label>
+                <div class="color-swatches" id="color-swatches"></div>
+            </div>
+            <button id="btn-delete-node" class="btn-danger">Eliminar nodo</button>
+        </section>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main id="main">
+
+        <!-- TOOLBAR -->
+        <header id="toolbar">
+            <div class="toolbar-left">
+                <span id="flow-title-display" class="flow-title-display">Sin título</span>
+                <button id="btn-rename" class="btn-tool" title="Renombrar">✎</button>
+            </div>
+            <div class="toolbar-center">
+                <button id="btn-zoom-out" class="btn-tool" title="Alejar">−</button>
+                <span id="zoom-label" class="zoom-label">100%</span>
+                <button id="btn-zoom-in" class="btn-tool" title="Acercar">+</button>
+                <button id="btn-fit" class="btn-tool" title="Ajustar a pantalla">⊡</button>
+                <span class="toolbar-sep"></span>
+                <button id="btn-undo" class="btn-tool" title="Deshacer">↺</button>
+                <button id="btn-redo" class="btn-tool" title="Rehacer">↻</button>
+                <span class="toolbar-sep"></span>
+                <button id="btn-grid" class="btn-tool active" title="Mostrar cuadrícula">⊞</button>
+                <button id="btn-snap" class="btn-tool active" title="Ajustar a cuadrícula">⋮⋮</button>
+            </div>
+            <div class="toolbar-right">
+                <button id="btn-templates" class="btn-secondary">📋 Plantillas</button>
+                <button id="btn-present" class="btn-secondary">🖥 Presentar</button>
+                <span class="toolbar-sep"></span>
+                <button id="btn-export-json" class="btn-secondary">⬇ JSON</button>
+                <button id="btn-export-png" class="btn-secondary">⬇ PNG</button>
+                <button id="btn-import" class="btn-secondary">⬆ Importar</button>
+                <button id="btn-save" class="btn-primary">💾 Guardar</button>
+            </div>
+        </header>
+
+        <!-- CANVAS AREA -->
+        <div id="canvas-container">
+            <canvas id="connections-canvas"></canvas>
+            <div id="canvas" tabindex="0">
+                <div id="grid-overlay"></div>
+                <div id="nodes-layer"></div>
+                <svg id="arrows-svg" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="var(--accent)" />
+                        </marker>
+                        <marker id="arrowhead-selected" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="var(--accent-bright)" />
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+
+            <!-- SEARCH BAR -->
+            <div id="search-bar" class="search-bar hidden">
+                <span class="search-icon">🔍</span>
+                <input id="search-input" type="text" placeholder="Buscar nodos..." autocomplete="off">
+                <span id="search-results-count" class="search-count"></span>
+                <button id="search-prev-btn" class="btn-search-nav">↑</button>
+                <button id="search-next-btn" class="btn-search-nav">↓</button>
+                <button id="search-close-btn" class="btn-search-close">✕</button>
+            </div>
+
+            <!-- MINIMAP -->
+            <div id="minimap">
+                <canvas id="minimap-canvas" width="160" height="110"></canvas>
+                <div id="minimap-viewport"></div>
+            </div>
+        </div>
+
+        <!-- SIMULATION PANEL -->
+        <div id="sim-panel" class="sim-panel hidden">
+            <div class="sim-header">
+                <span class="sim-title">▶ Simulación de Ejecución</span>
+                <div class="sim-controls">
+                    <button id="sim-prev" class="btn-sim" title="Paso anterior">⏮</button>
+                    <button id="sim-play" class="btn-sim btn-sim-play" title="Reproducir / Pausar">▶</button>
+                    <button id="sim-next" class="btn-sim" title="Paso siguiente">⏭</button>
+                    <button id="sim-reset" class="btn-sim" title="Reiniciar">⏹</button>
+                    <span class="sim-sep"></span>
+                    <label class="sim-speed-label">Vel.</label>
+                    <input id="sim-speed" type="range" min="200" max="2000" value="800" step="100" class="sim-speed-range">
+                    <button id="sim-close" class="btn-sim btn-sim-close" title="Cerrar simulación">✕</button>
+                </div>
+            </div>
+            <div id="sim-log" class="sim-log"></div>
+            <div id="sim-progress-bar"><div id="sim-progress-fill"></div></div>
+        </div>
+
+        <!-- STATUS BAR -->
+        <footer id="statusbar">
+            <span id="status-msg">Listo · Arrastra nodos al canvas para comenzar</span>
+            <span id="status-coords">x:0 y:0</span>
+            <span id="status-nodes">0 nodos · 0 conexiones</span>
+            <button id="btn-simulate" class="btn-statusbar-action">▶ Simular</button>
+            <button id="btn-search" class="btn-statusbar-action">🔍 Buscar</button>
+            <button id="btn-stats" class="btn-statusbar-action">📊 Stats</button>
+        </footer>
+    </main>
+
+    <!-- MODAL: rename flow -->
+    <div id="modal-rename" class="modal hidden">
+        <div class="modal-box">
+            <h2>Renombrar flujo</h2>
+            <input id="modal-rename-input" type="text" class="prop-input" placeholder="Nombre del flujo">
+            <div class="modal-actions">
+                <button id="modal-rename-cancel" class="btn-secondary">Cancelar</button>
+                <button id="modal-rename-ok" class="btn-primary">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: import -->
+    <div id="modal-import" class="modal hidden">
+        <div class="modal-box">
+            <h2>Importar JSON</h2>
+            <textarea id="modal-import-input" class="prop-input prop-textarea" rows="10" placeholder='Pega aquí el JSON exportado...'></textarea>
+            <div class="modal-actions">
+                <button id="modal-import-cancel" class="btn-secondary">Cancelar</button>
+                <button id="modal-import-ok" class="btn-primary">Importar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: connection label editor -->
+    <div id="modal-conn-label" class="modal hidden">
+        <div class="modal-box modal-box-sm">
+            <h2>Editar conexión</h2>
+            <div class="prop-group">
+                <label>Etiqueta de la conexión</label>
+                <input id="conn-label-input" type="text" class="prop-input" placeholder="Ej: Sí / No / Aprobado...">
+            </div>
+            <div class="prop-group">
+                <label>Estilo de línea</label>
+                <div class="conn-style-options" id="conn-style-options">
+                    <button class="conn-style-btn active" data-style="solid">——— Sólida</button>
+                    <button class="conn-style-btn" data-style="dashed">- - - Punteada</button>
+                    <button class="conn-style-btn" data-style="dotted">··· Dotted</button>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button id="modal-conn-cancel" class="btn-secondary">Cancelar</button>
+                <button id="modal-conn-ok" class="btn-primary">Aplicar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: stats -->
+    <div id="modal-stats" class="modal hidden">
+        <div class="modal-box">
+            <h2>📊 Estadísticas del Flujo</h2>
+            <div id="stats-content" class="stats-content"></div>
+            <div class="modal-actions">
+                <button id="modal-stats-close" class="btn-primary">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: templates -->
+    <div id="modal-templates" class="modal hidden">
+        <div class="modal-box modal-box-wide">
+            <h2>📋 Plantillas de Flujo</h2>
+            <p class="modal-subtitle">Selecciona una plantilla para comenzar rápidamente</p>
+            <div class="templates-grid" id="templates-grid"></div>
+            <div class="modal-actions">
+                <button id="modal-templates-close" class="btn-secondary">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRESENTATION MODE OVERLAY -->
+    <div id="presentation-mode" class="presentation-mode hidden">
+        <div class="pres-header">
+            <span class="pres-title" id="pres-title"></span>
+            <div class="pres-controls">
+                <button id="pres-prev" class="btn-pres">← Anterior</button>
+                <span id="pres-step-label" class="pres-step-label">Paso 1 / 1</span>
+                <button id="pres-next" class="btn-pres">Siguiente →</button>
+                <button id="pres-exit" class="btn-pres btn-pres-exit">✕ Salir</button>
+            </div>
+        </div>
+        <div class="pres-info">
+            <div class="pres-node-name" id="pres-node-name"></div>
+            <div class="pres-node-desc" id="pres-node-desc"></div>
+            <div class="pres-node-owner" id="pres-node-owner"></div>
+        </div>
+    </div>
+
+    <!-- CONTEXT MENU -->
+    <div id="context-menu" class="context-menu hidden">
+        <ul id="context-menu-list"></ul>
+    </div>
+
+    <!-- CONNECTION DELETE TOOLTIP -->
+    <div id="conn-tooltip" class="conn-tooltip hidden">
+        <span class="conn-label" id="conn-label-text"></span>
+        <button id="conn-edit-btn" class="conn-edit-btn" title="Editar">✎</button>
+        <button id="conn-delete-btn" class="conn-del-btn" title="Eliminar">✕</button>
+    </div>
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div id="toast-container" class="toast-container"></div>
+
 </div>
+
+<!-- INPUT: hidden file input -->
+<input type="file" id="file-input" accept=".json" style="display:none">
+

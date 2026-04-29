@@ -24,7 +24,6 @@ D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\rjsmcshtml.dswa.cache.json
 D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\scopedcss\bundle\FlowForge.styles.css
 D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\scopedcss\projectbundle\FlowForge.bundle.scp.css
-D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\compressed\9lcm9dh9a7-{0}-b9sayid5wm-b9sayid5wm.gz
 D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\compressed\n2pkeqgqay-{0}-61n19gt1b8-61n19gt1b8.gz
 D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\compressed\bj3jr1wcm8-{0}-bqjiyaj88i-bqjiyaj88i.gz
 D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\compressed\mtq1t8v9gy-{0}-c2jlpeoesf-c2jlpeoesf.gz
@@ -97,4 +96,9 @@ D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\refint\FlowForge.dll
 D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\FlowForge.pdb
 D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\FlowForge.genruntimeconfig.cache
 D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\ref\FlowForge.dll
-D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\compressed\5295tiponp-{0}-o2nhplu1ql-o2nhplu1ql.gz
+D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\compressed\9lcm9dh9a7-{0}-qqivfqjt8i-qqivfqjt8i.gz
+D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\compressed\5685aihao7-{0}-e1rqa3imo8-e1rqa3imo8.gz
+D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\compressed\kcmi905knq-{0}-e56as0ybyn-e56as0ybyn.gz
+D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\compressed\wstmqelpfj-{0}-kliobyj2wv-kliobyj2wv.gz
+D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\compressed\5295tiponp-{0}-mhxw15h44p-mhxw15h44p.gz
+D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\compressed\68zsulb2gu-{0}-72fqyl59h3-72fqyl59h3.gz
