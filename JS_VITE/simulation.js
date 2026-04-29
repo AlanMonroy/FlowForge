@@ -341,3 +341,14 @@ function toast(msg, type = 'info', duration = 3000) {
     setTimeout(() => el.remove(), 300);
   }, duration);
 }
+
+/* ─── Bootstrap SimulationEngine after MVC is ready ─── */
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const model = window._flowModel;
+    const view  = window._flowView;
+    const ctrl  = window._flowCtrl;
+    if (!model || !view || !ctrl) return;
+    window._sim = new SimulationEngine(model, view, ctrl);
+  }, 100);
+});

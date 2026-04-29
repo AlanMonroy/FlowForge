@@ -834,7 +834,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const templates   = new TemplateLibrary(model, ctrl);
     const pres        = new PresentationMode(model, ctrl);
     const ctxMenu     = new ContextMenu(model, ctrl);
-    const sim         = new SimulationEngine(model, view, ctrl);
 
     window._minimap = minimap;
 
