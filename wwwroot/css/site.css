@@ -578,6 +578,7 @@ ul {
     height: 100%;
     background-image: linear-gradient(rgba(42,47,63,0.20) 1px, transparent 1px), linear-gradient(90deg, rgba(42,47,63,0.20) 1px, transparent 1px);
     background-size: 20px 20px;
+    background-position: var(--grid-x, 0px) var(--grid-y, 0px);
     pointer-events: none;
 }
 

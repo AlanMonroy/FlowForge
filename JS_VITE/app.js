@@ -795,12 +795,13 @@ class FlowController {
                 const nodeId = nodeEl.dataset.nodeId;
                 this._selectNode(nodeId);
 
-                const rect = nodeEl.getBoundingClientRect();
+                const f = this.model.getActiveFlow();
+                const node = f.nodes.find(n => n.id === nodeId);
+                const canvasClick = this._screenToCanvas(e.clientX, e.clientY);
                 this.draggingNode = nodeId;
-                this.dragOffX = e.clientX - rect.left;
-                this.dragOffY = e.clientY - rect.top;
+                this.dragOffX = canvasClick.x - node.x;
+                this.dragOffY = canvasClick.y - node.y;
                 this.nodeMoved = false;
-                // Snapshot BEFORE moving so undo restores original position
                 this._dragUndoSnapshot = this.model._snapshot(this.model.activeFlowId);
                 return;
             }
@@ -840,11 +841,11 @@ class FlowController {
             }
 
             if (this.draggingNode) {
-                const cr = container.getBoundingClientRect();
-                let x = (e.clientX - cr.left - this.panX) / this.zoom - this.dragOffX / this.zoom;
-                let y = (e.clientY - cr.top - this.panY) / this.zoom - this.dragOffY / this.zoom;
+                const canvasPos = this._screenToCanvas(e.clientX, e.clientY);
+                let x = canvasPos.x - this.dragOffX;
+                let y = canvasPos.y - this.dragOffY;
                 if (this.snapEnabled) { x = Math.round(x / this.snapGrid) * this.snapGrid; y = Math.round(y / this.snapGrid) * this.snapGrid; }
-                x = Math.max(0, x); y = Math.max(0, y);
+                //x = Math.max(0, x); y = Math.max(0, y); // LIMITANTE DE -X, -Y 
                 this.model.moveNode(this.model.activeFlowId, this.draggingNode, x, y);
                 this.view.updateNodePosition(this.draggingNode, x, y);
                 this._renderConnections();
@@ -883,7 +884,6 @@ class FlowController {
 
             if (this.draggingNode) {
                 if (this.nodeMoved) {
-                    // Push the pre-drag snapshot so undo restores original position
                     const flowId = this.model.activeFlowId;
                     if (this._dragUndoSnapshot && this.model._undoStack[flowId]) {
                         this.model._undoStack[flowId].push(this._dragUndoSnapshot);
@@ -1091,6 +1091,15 @@ class FlowController {
     _applyTransform() {
         this.view.canvas.style.transform = `translate(${this.panX}px, ${this.panY}px) scale(${this.zoom})`;
         this.view.setZoom(this.zoom);
+
+        // Sync grid to pan/zoom so it always aligns with canvas coordinates
+        const gridSize = 20 * this.zoom;
+        const gridX = this.panX % gridSize;
+        const gridY = this.panY % gridSize;
+        const container = this.view.container;
+        container.style.setProperty('--grid-size', gridSize + 'px');
+        container.style.setProperty('--grid-x', gridX + 'px');
+        container.style.setProperty('--grid-y', gridY + 'px');
     }
 
     _changeZoom(delta, originX, originY) {
