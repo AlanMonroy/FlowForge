@@ -437,11 +437,25 @@ class FlowView {
         if (line) line.remove();
     }
 
-    _connPoints(from, to) {
+    /*_connPoints(from, to) {
         const fw = 150, fh = 60;
         const x1 = from.x + fw / 2;
         const y1 = from.y + fh;
         const x2 = to.x + fw / 2;
+        const y2 = to.y;
+        return { x1, y1, x2, y2 };
+    }*/
+
+    _connPoints(from, to) {
+        const nodeW = { decision: 180, start: 150, end: 150 };
+        const nodeH = { decision: 120, start: 60, end: 60 };
+        const fw = nodeW[from.type] || 150;
+        const fh = nodeH[from.type] || 60;
+        const tw = nodeW[to.type] || 150;
+        const th = nodeH[to.type] || 60;
+        const x1 = from.x + fw / 2;
+        const y1 = from.y + fh;
+        const x2 = to.x + tw / 2;
         const y2 = to.y;
         return { x1, y1, x2, y2 };
     }

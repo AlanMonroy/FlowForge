@@ -100,5 +100,5 @@ D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\compressed\kcmi905knq-{0}-e56as
 D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\compressed\5295tiponp-{0}-mhxw15h44p-mhxw15h44p.gz
 D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\compressed\68zsulb2gu-{0}-72fqyl59h3-72fqyl59h3.gz
 D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\compressed\wstmqelpfj-{0}-9lb93btb45-9lb93btb45.gz
-D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\compressed\9lcm9dh9a7-{0}-w1jscrufw5-w1jscrufw5.gz
-D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\compressed\5685aihao7-{0}-r1smu4h6zr-r1smu4h6zr.gz
+D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\compressed\5685aihao7-{0}-7csi9aahze-7csi9aahze.gz
+D:\Programacion\.NET\FlowForge\obj\Debug\net10.0\compressed\9lcm9dh9a7-{0}-fics50vgoo-fics50vgoo.gz

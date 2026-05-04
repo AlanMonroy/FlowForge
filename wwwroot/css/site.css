@@ -690,10 +690,11 @@ ul {
     transform: rotate(0deg);
     border-radius: 4px;
     background: linear-gradient(135deg, var(--node-decision-14), var(--surface2));
-    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-    min-width: 140px;
-    min-height: 70px;
+    clip-path: polygon(50% 5%, 95% 50%, 50% 95%, 5% 50%);
+    min-width: 180px;
+    min-height: 120px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 }
