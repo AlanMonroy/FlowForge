@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "D:\\Programacion\\.NET\\FlowForge\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{ACD5D46C-CE5D-C90D-EEAB-19E499DA62EF}|FlowForge.csproj|d:\\programacion\\.net\\flowforge\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{ACD5D46C-CE5D-C90D-EEAB-19E499DA62EF}|FlowForge.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{ACD5D46C-CE5D-C90D-EEAB-19E499DA62EF}|FlowForge.csproj|d:\\programacion\\.net\\flowforge\\js_vite\\app.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
       "RelativeMoniker": "D:0:0:{ACD5D46C-CE5D-C90D-EEAB-19E499DA62EF}|FlowForge.csproj|solutionrelative:js_vite\\app.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     },
@@ -26,11 +30,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Index.cshtml",
               "DocumentMoniker": "D:\\Programacion\\.NET\\FlowForge\\Views\\Home\\Index.cshtml",
               "RelativeDocumentMoniker": "Views\\Home\\Index.cshtml",
@@ -43,7 +47,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "site.css",
               "DocumentMoniker": "D:\\Programacion\\.NET\\FlowForge\\wwwroot\\css\\site.css",
               "RelativeDocumentMoniker": "wwwroot\\css\\site.css",
@@ -52,7 +56,19 @@
               "ViewState": "AgIAAJ0CAAAAAAAAAAAqwLgCAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
               "WhenOpened": "2026-04-29T02:51:26.715Z",
-              "IsPinned": true,
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\Programacion\\.NET\\FlowForge\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "D:\\Programacion\\.NET\\FlowForge\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-09-04T19:21:52.299Z",
               "EditorCaption": ""
             },
             {
@@ -61,7 +77,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "_Layout.cshtml",
               "DocumentMoniker": "D:\\Programacion\\.NET\\FlowForge\\Views\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "Views\\Shared\\_Layout.cshtml",
@@ -73,7 +89,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "app.js",
               "DocumentMoniker": "D:\\Programacion\\.NET\\FlowForge\\JS_VITE\\app.js",
               "RelativeDocumentMoniker": "JS_VITE\\app.js",
