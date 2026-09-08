@@ -12,15 +12,13 @@ class FlowModel {
         this.activeFlowId = null;
         this._undoStack = {};
         this._redoStack = {};
-        this.loadFromStorage();
-        if (!this.flows.length) this._seedDefaults();
     }
 
     _uuid() {
         return 'n' + Math.random().toString(36).slice(2, 10);
     }
 
-    _seedDefaults() {
+    async _seedDefaults() {
         const id = this.createFlow('Proceso de Ventas');
         const f = this.getFlow(id);
         const n1 = this.addNode(id, { type: 'start', label: 'Inicio', x: 200, y: 100 });
@@ -37,25 +35,25 @@ class FlowModel {
         this.addConnection(id, { from: n4, to: n6 });
         this.addConnection(id, { from: n5, to: n6 });
         this.addConnection(id, { from: n6, to: n7 });
-        this.saveToStorage();
+        await this.saveToStorage();
     }
 
-    createFlow(name = 'Nuevo Flujo') {
+    async createFlow(name = 'Nuevo Flujo') {
         const id = 'f' + Date.now();
         this.flows.push({ id, name, nodes: [], connections: [], created: Date.now() });
         this._undoStack[id] = [];
         this._redoStack[id] = [];
         if (!this.activeFlowId) this.activeFlowId = id;
-        this.saveToStorage();
+        await this.saveToStorage();
         return id;
     }
 
-    deleteFlow(id) {
+    async deleteFlow(id) {
         this.flows = this.flows.filter(f => f.id !== id);
         if (this.activeFlowId === id) {
             this.activeFlowId = this.flows.length ? this.flows[0].id : null;
         }
-        this.saveToStorage();
+        await fetch(`/api/flows/${id}`, { method: 'DELETE' });
     }
 
     getFlow(id) {
@@ -66,9 +64,9 @@ class FlowModel {
         return this.getFlow(this.activeFlowId);
     }
 
-    renameFlow(id, name) {
+    async renameFlow(id, name) {
         const f = this.getFlow(id);
-        if (f) { f.name = name; this.saveToStorage(); }
+        if (f) { f.name = name; await this.saveToStorage(); }
     }
 
     setActiveFlow(id) {
@@ -76,7 +74,7 @@ class FlowModel {
     }
 
     // ── Node CRUD ──
-    addNode(flowId, data) {
+    async addNode(flowId, data) {
         const f = this.getFlow(flowId);
         if (!f) return null;
         const node = {
@@ -91,27 +89,27 @@ class FlowModel {
         };
         this._pushUndo(flowId);
         f.nodes.push(node);
-        this.saveToStorage();
+        await this.saveToStorage();
         return node.id;
     }
 
-    updateNode(flowId, nodeId, changes) {
+    async updateNode(flowId, nodeId, changes) {
         const f = this.getFlow(flowId);
         if (!f) return;
         const node = f.nodes.find(n => n.id === nodeId);
         if (!node) return;
         this._pushUndo(flowId);
         Object.assign(node, changes);
-        this.saveToStorage();
+        await this.saveToStorage();
     }
 
-    deleteNode(flowId, nodeId) {
+    async deleteNode(flowId, nodeId) {
         const f = this.getFlow(flowId);
         if (!f) return;
         this._pushUndo(flowId);
         f.nodes = f.nodes.filter(n => n.id !== nodeId);
         f.connections = f.connections.filter(c => c.from !== nodeId && c.to !== nodeId);
-        this.saveToStorage();
+        await this.saveToStorage();
     }
 
     moveNode(flowId, nodeId, x, y) {
@@ -123,7 +121,7 @@ class FlowModel {
     }
 
     // ── Connection CRUD ──
-    addConnection(flowId, data) {
+    async addConnection(flowId, data) {
         const f = this.getFlow(flowId);
         if (!f) return null;
         // Avoid duplicates
@@ -137,24 +135,24 @@ class FlowModel {
         };
         this._pushUndo(flowId);
         f.connections.push(conn);
-        this.saveToStorage();
+        await this.saveToStorage();
         return conn.id;
     }
 
-    deleteConnection(flowId, connId) {
+    async deleteConnection(flowId, connId) {
         const f = this.getFlow(flowId);
         if (!f) return;
         this._pushUndo(flowId);
         f.connections = f.connections.filter(c => c.id !== connId);
-        this.saveToStorage();
+        await this.saveToStorage();
     }
 
-    updateConnection(flowId, connId, changes) {
+    async updateConnection(flowId, connId, changes) {
         const f = this.getFlow(flowId);
         if (!f) return;
         const c = f.connections.find(c => c.id === connId);
         if (c) Object.assign(c, changes);
-        this.saveToStorage();
+        await this.saveToStorage();
     }
 
     // ── Undo/Redo ──
@@ -172,7 +170,7 @@ class FlowModel {
         this._redoStack[flowId] = [];
     }
 
-    undo(flowId) {
+    async undo(flowId) {
         const stack = this._undoStack[flowId];
         if (!stack || !stack.length) return false;
         const f = this.getFlow(flowId);
@@ -181,11 +179,11 @@ class FlowModel {
         const snap = stack.pop();
         f.nodes = snap.nodes;
         f.connections = snap.connections;
-        this.saveToStorage();
+        await this.saveToStorage();
         return true;
     }
 
-    redo(flowId) {
+    async redo(flowId) {
         const stack = this._redoStack[flowId];
         if (!stack || !stack.length) return false;
         const f = this.getFlow(flowId);
@@ -194,32 +192,43 @@ class FlowModel {
         const snap = stack.pop();
         f.nodes = snap.nodes;
         f.connections = snap.connections;
-        this.saveToStorage();
+        await this.saveToStorage();
         return true;
     }
 
     // ── Persistence ──
-    saveToStorage() {
-        try {
-            localStorage.setItem('flowcraft_v1', JSON.stringify({
-                flows: this.flows,
-                activeFlowId: this.activeFlowId
-            }));
-        } catch (e) { }
+    async saveToStorage() {
+        console.log('Guardando flows:', this.flows); // ← agregar
+        for (const flow of this.flows) {
+            await fetch('/api/flows', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: flow.id,
+                    name: flow.name,
+                    created: flow.created,
+                    data: { nodes: flow.nodes, connections: flow.connections }
+                })
+            });
+        }
     }
 
-    loadFromStorage() {
-        try {
-            const raw = localStorage.getItem('flowcraft_v1');
-            if (!raw) return;
-            const data = JSON.parse(raw);
-            this.flows = data.flows || [];
-            this.activeFlowId = data.activeFlowId || null;
-            this.flows.forEach(f => {
-                this._undoStack[f.id] = [];
-                this._redoStack[f.id] = [];
-            });
-        } catch (e) { }
+    async loadFromStorage() {
+        const res = await fetch('/api/flows');
+        if (!res.ok) return;
+        const flows = await res.json();
+        this.flows = flows.map(f => ({
+            id: f.id,
+            name: f.name,
+            created: f.created,
+            nodes: f.data.nodes || [],
+            connections: f.data.connections || []
+        }));
+        this.activeFlowId = this.flows.length ? this.flows[0].id : null;
+        this.flows.forEach(f => {
+            this._undoStack[f.id] = [];
+            this._redoStack[f.id] = [];
+        });
     }
 
     exportFlow(flowId) {
@@ -227,7 +236,7 @@ class FlowModel {
         return f ? JSON.stringify(f, null, 2) : '';
     }
 
-    importFlow(jsonStr) {
+    async importFlow(jsonStr) {
         try {
             const data = JSON.parse(jsonStr);
             if (!data.nodes || !data.connections) return false;
@@ -238,7 +247,7 @@ class FlowModel {
             this._undoStack[id] = [];
             this._redoStack[id] = [];
             this.activeFlowId = id;
-            this.saveToStorage();
+            await this.saveToStorage();
             return id;
         } catch (e) { return false; }
     }
@@ -589,6 +598,8 @@ class FlowController {
     //  TOOLBAR BINDINGS
     // ═══════════════════════════════════════
     _bindToolbar() {
+        console.log('_bindToolbar ejecutado');
+        console.log('btn-save existe:', document.getElementById('btn-save'));
         document.getElementById('btn-new-flow').addEventListener('click', () => {
             const id = this.model.createFlow('Flujo ' + (this.model.flows.length));
             this.model.setActiveFlow(id);
@@ -636,8 +647,9 @@ class FlowController {
             this.view.setStatus(this.snapEnabled ? 'Snap activado' : 'Snap desactivado');
         });
 
-        document.getElementById('btn-save').addEventListener('click', () => {
-            this.model.saveToStorage();
+        document.getElementById('btn-save').addEventListener('click', async () => {
+            console.log('click save', this.model);
+            await this.model.saveToStorage();
             this.view.setStatus('✓ Guardado correctamente');
         });
 
@@ -666,7 +678,7 @@ class FlowController {
     // ═══════════════════════════════════════
     _bindSidebar() {
         // Flow list clicks (delegation)
-        document.getElementById('flow-list').addEventListener('click', e => {
+        document.getElementById('flow-list').addEventListener('click', async e => {
             const delBtn = e.target.closest('[data-del]');
             if (delBtn) {
                 const id = delBtn.dataset.del;
@@ -675,7 +687,7 @@ class FlowController {
                     return;
                 }
                 if (confirm('¿Eliminar este flujo?')) {
-                    this.model.deleteFlow(id);
+                    await this.model.deleteFlow(id);
                     this.selectedNodeId = null;
                     this.view.hideProperties();
                     this._renderAll();
@@ -745,9 +757,9 @@ class FlowController {
             }
         });
 
-        document.getElementById('btn-delete-node').addEventListener('click', () => {
+        document.getElementById('btn-delete-node').addEventListener('click', async () => {
             if (!this.selectedNodeId) return;
-            this.model.deleteNode(this.model.activeFlowId, this.selectedNodeId);
+            await this.model.deleteNode(this.model.activeFlowId, this.selectedNodeId);
             this.selectedNodeId = null;
             this.view.hideProperties();
             this._renderAll();
@@ -868,7 +880,7 @@ class FlowController {
         });
 
         // Mouse up
-        window.addEventListener('mouseup', e => {
+        window.addEventListener('mouseup', async e => {
             if (this.isPanning) {
                 this.isPanning = false;
                 container.style.cursor = '';
@@ -905,7 +917,7 @@ class FlowController {
                             this.model._undoStack[flowId].shift();
                         this.model._redoStack[flowId] = [];
                     }
-                    this.model.saveToStorage();
+                    await this.model.saveToStorage();
                 }
                 this._dragUndoSnapshot = null;
                 this.draggingNode = null;
@@ -1003,7 +1015,7 @@ class FlowController {
     //  KEYBOARD
     // ═══════════════════════════════════════
     _bindKeyboard() {
-        window.addEventListener('keydown', e => {
+        window.addEventListener('keydown', async e => {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.contentEditable === 'true') return;
 
             if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
@@ -1020,7 +1032,7 @@ class FlowController {
             }
             if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                 e.preventDefault();
-                this.model.saveToStorage();
+                await this.model.saveToStorage();
                 this.view.setStatus('✓ Guardado');
             }
             if (e.key === 'Delete' || e.key === 'Backspace') {
@@ -1246,20 +1258,19 @@ class FlowController {
 
 
 /* ─────────────────────────── BOOTSTRAP ─────────────────────────── */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const model = new FlowModel();
+    await model.loadFromStorage();       // esperar que cargue de Supabase
+    if (!model.flows.length) await model._seedDefaults();
+
     const view = new FlowView();
     const ctrl = new FlowController(model, view);
-
-    // Expose globally for extras.js
     window._flowModel = model;
     window._flowView = view;
     window._flowCtrl = ctrl;
 
-    // Fit after browser has painted and container has real dimensions
+    ctrl._renderAll();
     requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            ctrl._fitToScreen();
-        });
+        requestAnimationFrame(() => ctrl._fitToScreen());
     });
 });

@@ -85,6 +85,10 @@
     padding: 0;
 }
 
+#app, #app * {
+    pointer-events: auto;
+}
+
 html, body {
     width: 100%;
     height: 100%;
@@ -95,6 +99,9 @@ body {
     background: var(--bg);
     color: var(--text);
     font-family: var(--font-mono);
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
 }
 
 button {
@@ -450,6 +457,7 @@ ul {
     display: grid;
     grid-template-rows: var(--toolbar-h) 1fr auto var(--statusbar-h);
     overflow: hidden;
+    position: relative;
 }
 
 /* TOOLBAR */
@@ -556,9 +564,9 @@ ul {
     cursor: grab;
 }
 
-    #canvas-container:active {
-        cursor: grabbing;
-    }
+#canvas-container:active {
+    cursor: grabbing;
+}
 
 #canvas {
     position: absolute;

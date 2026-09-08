@@ -653,7 +653,9 @@ class ContextMenu {
       e.preventDefault();
       this._show(e);
     });
-    document.addEventListener('click', () => this.hide());
+    document.addEventListener('click', (e) => {
+        if (!this._menu.contains(e.target)) this.hide();
+    });
     document.addEventListener('contextmenu', () => {}); // prevent extra triggers
   }
 
